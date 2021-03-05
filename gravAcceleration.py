@@ -1,21 +1,28 @@
 import particle
 import numpy as np
+import math
 
-def gravPotential(x, y, z, m, point):
-    particles = []
+G = 6.67*10**-11
+h = .000002
+particles = []
+
+def gravPotential(point, particles):
     phi = 0.0
     file1 = open("particleSmall.txt", "r")
     for line in file1:
         x, y, z, m = line.split(" ") 
+        x = float(x)
+        y = float(y)
+        z = float(z)
+        m = float(m)
         #p = particle.Particle(x, y, z, m)
-        particles.append(particle.Particle())
+        particles.append(particle.Particle(x, y, z, m))
     for p in particles:
-        r = math.sqrt((p.x - point(0))**2 + (p.y - point(1))**2 + (p.z - point(2))**2)
-        phi += -G*p.mass/r
+        r = math.sqrt((p.x - point[0])**2 + (p.y - point[1])**2 + (p.z - point[2])**2)
+        phi += -G*p.m/r
     return phi
 
-def centraldifferencegrav3D(f, x, y, z, h, i, particles):
-    i = 0
+def centraldifferencegrav3D(f, point, h, i, particles):
     x_1 = [0,0,0]
     x_2 = [0,0,0]
     for j in range(0,3):
@@ -25,29 +32,31 @@ def centraldifferencegrav3D(f, x, y, z, h, i, particles):
             x_2[j] += h/2
     return (f(x_2, particles) - f(x_1, particles))/h
 
-point = []
+a, b, c = input("Where do you want to calculate the gravitational acceleration?: ").split(" ")
+a = float(a)
+b = float(b)
+c = float(c)
+point = np.array([a, b, c])
+#point.extend([a, b, c])
 
-x, y, z = input("Where do you want to calculate the gravitational acceleration?: ").split(" ")
-x = float(x)
-y = float(y)
-z = float(z)
-point.extend([x, y, z])
-
+x = 0
+y = 0
+z = 0
 m = 0
 f_x = 0
 f_y = 0
 f_z = 0
-phi = gravPotential(x, y, z, m, point)
+#phi = gravPotential(point, particles)
 
-f = phi
+f = gravPotential(point, particles)
 i = 0
-f_x = centraldifferencegrav3D(f, x_1, x_2, h, i, particles)
+f_x = centraldifferencegrav3D(f, point, h, i, particles)
 
 i = 1
-f_y = centraldifferencegrav3D(f, x_1, x_2, h, i, particles)
+f_y = centraldifferencegrav3D(f, point, h, i, particles)
 
 i = 2
-f_z = centraldifferencegrav3D(f, x_1, x_2, h, i, particles)
+f_z = centraldifferencegrav3D(f, point, h, i, particles)
 
 gradient = [f_x, f_y, f_z]
 
