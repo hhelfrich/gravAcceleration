@@ -2,6 +2,12 @@ import particle
 import numpy as np
 import math
 
+class Location:
+    def __init__(self, X, Y, Z):
+        self.X = X 
+        self.Y = Y
+        self.Z = Z
+    
 G = 6.67*10**-11
 h = .000002
 particles = []
@@ -35,11 +41,14 @@ def centraldifferencegrav3D(f, point, h, i, particles):
             x_2[j] += h/2
     return (f(x_2, particles) - f(x_1, particles))/h
 
-a, b, c = input("Where do you want to calculate the gravitational acceleration?: ").split(" ")
-a = float(a)
-b = float(b)
-c = float(c)
-point = np.array([a, b, c])
+point = []
+for p in particles:
+    point.extend([p.x, p.y, p.z])
+#a, b, c = input("Where do you want to calculate the gravitational acceleration?: ").split(" ")
+#a = float(a)
+#b = float(b)
+#c = float(c)
+#point = np.array([a, b, c])
 #point.extend([a, b, c])
 
 x = 0
@@ -49,26 +58,26 @@ m = 0
 f_x = 0
 f_y = 0
 f_z = 0
+gradient = []
 #phi = gravPotential(point, particles)
-
 f = gravPotential(point, particles)
-i = 0
-f_x = centraldifferencegrav3D(gravPotential, point, h, i, particles)
+for position in point:
 
-i = 1
-f_y = centraldifferencegrav3D(gravPotential, point, h, i, particles)
+    i = 0
+    f_x = centraldifferencegrav3D(gravPotential, position., h, i, particles)
 
-i = 2
-f_z = centraldifferencegrav3D(gravPotential, point, h, i, particles)
+    i = 1
+    f_y = centraldifferencegrav3D(gravPotential, position, h, i, particles)
 
-gradient = [f_x, f_y, f_z]
+    i = 2
+    f_z = centraldifferencegrav3D(gravPotential, position, h, i, particles)
+
+    gradient.extend([f_x, f_y, f_z])
 
 #masstotal = 0
 #for p in particles:
     #masstotal += p.m
 
-
-acceleration = [0, 0, 0]
 acceleration = gradient
 
 print(str(acceleration))
