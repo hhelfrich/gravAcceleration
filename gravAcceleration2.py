@@ -1,12 +1,6 @@
 import particle
 import numpy as np
 import math
-
-class Location:
-    def __init__(self, X, Y, Z):
-        self.X = X 
-        self.Y = Y
-        self.Z = Z
     
 G = 6.67*10**-11
 h = .000002
@@ -42,9 +36,6 @@ def centraldifferencegrav3D(f, point, h, i, particles):
             x_2[j] += h/2
     return (f(x_2, particles) - f(x_1, particles))/h
 
-point = []
-for p in particles:
-    point.extend([p.x, p.y, p.z])
 #a, b, c = input("Where do you want to calculate the gravitational acceleration?: ").split(" ")
 #a = float(a)
 #b = float(b)
@@ -61,24 +52,23 @@ f_y = 0
 f_z = 0
 gradient = []
 #phi = gravPotential(point, particles)
-f = gravPotential(point, particles)
-for position in point:
+#f = gravPotential(point, particles)
+for p in particles:
+    pos = np.array([p.x, p.y, p.z])
 
     i = 0
-    f_x = centraldifferencegrav3D(gravPotential, position, h, i, particles)
+    f_x = centraldifferencegrav3D(gravPotential, pos, h, i, particles)
 
     i = 1
-    f_y = centraldifferencegrav3D(gravPotential, position.point, h, i, particles)
+    f_y = centraldifferencegrav3D(gravPotential, pos, h, i, particles)
 
     i = 2
-    f_z = centraldifferencegrav3D(gravPotential, position.point, h, i, particles)
+    f_z = centraldifferencegrav3D(gravPotential, pos, h, i, particles)
 
-    gradient.extend([f_x, f_y, f_z])
+    gradient.append([f_x, f_y, f_z])
 
-#masstotal = 0
-#for p in particles:
-    #masstotal += p.m
+#acceleration = gradient
 
-acceleration = gradient
-
-print(str(acceleration))
+outFile = open("gravAcceleration.txt", "w")
+outFile.write(str(gradient))
+outFile.close()

@@ -2,8 +2,8 @@ import particle
 import numpy as np
 import math
 
-G = 6.67*10**-11
-h = .000002
+G = 6.67E-11
+h = 1E-8
 particles = []
 file1 = open("particlesLarge.txt", "r")
 for line in file1:
@@ -21,7 +21,8 @@ def gravPotential(point, particles):
     file1 = open("particleSmall.txt", "r")
     for p in particles:
         r = math.sqrt((p.x - point[0])**2 + (p.y - point[1])**2 + (p.z - point[2])**2)
-        phi += -G*p.m/r
+        if (r > h/2):   
+            phi += -G*p.m/r
     return phi
 
 def centraldifferencegrav3D(f, point, h, i, particles):
@@ -52,14 +53,12 @@ f_z = 0
 #phi = gravPotential(point, particles)
 
 f = gravPotential(point, particles)
-i = 0
-f_x = centraldifferencegrav3D(gravPotential, point, h, i, particles)
 
-i = 1
-f_y = centraldifferencegrav3D(gravPotential, point, h, i, particles)
+f_x = centraldifferencegrav3D(gravPotential, point, h, 0, particles)
 
-i = 2
-f_z = centraldifferencegrav3D(gravPotential, point, h, i, particles)
+f_y = centraldifferencegrav3D(gravPotential, point, h, 1, particles)
+
+f_z = centraldifferencegrav3D(gravPotential, point, h, 2, particles)
 
 gradient = [f_x, f_y, f_z]
 
